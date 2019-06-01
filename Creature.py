@@ -1,3 +1,8 @@
+################################################################################
+# Author: Ezra Bartlett
+# This file contains the "creature" that will be the star of this simulation
+################################################################################
+
 import pygame
 import numpy as np
 import math
@@ -5,10 +10,40 @@ import random as rand
 import NeuralNetwork as nn
 
 class Creature():
+    """
+    A class used to represent a Creature (I'll come up with a better name eventually)
+
+    Attributes
+    ----------
+    screen :
+        The pygame screen that the creature should render to
+    pointList : [(x,y),...]
+        The points that make up the shape of the creature.
+
+    Methods
+    -------
+    __init__(self, screen, parent1 = "", parent2 = ""):
+        Assigns the screen and accepts the parents, for future sexual style
+        selection.
+
+    copy(self, parent):
+        Creates a mutated copy of the parent.
+    shuffle(self, point):
+        Shuffles a point by a random amount. Uses the percent point function,
+        in which large deviations have a lower chance of happening
+
+    mutate(self):
+        Mutates each point of the shape, with a small chance of adding new points
+
+    fitnessEval(self):
+        For determining the fitness of a child creature. Will be useless eventually,
+        If natural selection is effectively simulated
+    """
 
     def __init__(self, screen, parent1 = "", parent2 = ""):
         self.screen = screen
         self.pointList = [(rand.random()*500,rand.random()*500),(rand.random()*500,rand.random()*500),(rand.random()*500,rand.random()*500)]
+
 
     def copy(self, parent):
         self.pointList = parent.pointList.copy()
@@ -28,12 +63,12 @@ class Creature():
             tempPoint = self.shuffle(point)
             self.pointList[i] = tempPoint
             self.fitnessEval()
-            #if len(self.pointList)>3 and rand.random()<.005:
-            #    del self.pointList[i]
+            if len(self.pointList)>3 and rand.random()<.005:
+                del self.pointList[i]
 
-            #if rand.random()<.005:
-            #    tempPoint = (abs(self.pointList[i-1][0]+point[0])/2,abs(self.pointList[i-1][1]+point[1])/2)
-            #    self.pointList.insert(i,tempPoint)
+            if rand.random()<.005:
+                tempPoint = (abs(self.pointList[i-1][0]+point[0])/2,abs(self.pointList[i-1][1]+point[1])/2)
+                self.pointList.insert(i,tempPoint)
 
     def fitnessEval(self):
         a = np.array([self.pointList[0][0],self.pointList[0][1]])
@@ -63,6 +98,10 @@ class Creature():
         #print(angles)
 
         fitness = abs(angles[0]-75)+abs(angles[1]-75)+abs(angles[2]-30)#(angles[0]-60)**2+(angles[1]-60)**2+(angles[2]-60)**2
+
+        if len(self.pointList)!=3:
+            fitness+= abs(len(self.pointList)-3)*10
+
         #print(fitness)
         return fitness
 
