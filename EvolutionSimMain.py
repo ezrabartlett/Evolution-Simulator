@@ -14,7 +14,7 @@ screen = pygame.display.set_mode((500,500))
 pygame.display.set_caption("EvoSim")
 lsit = []
 
-firstCreature = Creature(screen)
+firstCreature = Creature(screen, 0)
 food = food(screen, (100,100))
 
 runFlag = True
@@ -23,7 +23,7 @@ generation = 0
 while runFlag:
     generation+=1
     print("Generation "+str(generation))
-    pygame.time.delay(100)
+    pygame.time.delay(10)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -36,19 +36,21 @@ while runFlag:
     children = []
     mostFit = 99.9
     bestFitness = 9999.9
-    for i in range(0,9):
-        children.append(Creature(screen))
-        children[i].copy(firstCreature)
-        fitness = children[i].fitnessEval()
-        if(fitness<bestFitness):
-            bestFitness = fitness
-            mostFit = i
-    print("Most fit child:")
-    print(mostFit)
-    print(" ")
-    print(children[mostFit].fitnessEval())
+    #for i in range(0,9):
+    #    children.append(Creature(screen))
+    #    children[i].copy(firstCreature)
+    #    fitness = children[i].fitnessEval()
+    #    if(fitness<bestFitness):
+    #        bestFitness = fitness
+    #        mostFit = i
+    #print("Most fit child:")
+    #print(mostFit)
+    #print(" ")
+    #print(children[mostFit].fitnessEval())
 
-    firstCreature = children[mostFit]
+    firstCreature.mutate();
+
+    #firstCreature = children[mostFit]
     firstCreature.draw()
 
     pygame.display.update()

@@ -40,13 +40,31 @@ class Creature():
         If natural selection is effectively simulated
     """
 
-    def __init__(self, screen, parent1 = "", parent2 = ""):
+    def __init__(self, screen, position = 0, rotation = 0, parent1 = "", parent2 = ""):
         self.screen = screen
         self.pointList = [(rand.random()*500,rand.random()*500),(rand.random()*500,rand.random()*500),(rand.random()*500,rand.random()*500)]
+        self.position = position
+        self.rotation = rotation
 
+        self.body = [(-10,0),(10,0),(0,20)]
+
+        self.center = self.centroid()
+
+
+    def centroid(self):
+        x = [p[0] for p in self.body]
+        y = [p[1] for p in self.body]
+        return (sum(x) / len(self.body), sum(y) / len(self.body))
+
+    def translate(self, points, angle, position):
+        return np.dot(np.array(points)-np.array(self.center),np.array([[np.cos(angle),np.sin(angle)],[-np.sin(angle),np.cos(angle)]]))+self.center+self.position
 
     def copy(self, parent):
         self.pointList = parent.pointList.copy()
+        self.position = parent.position.copy()
+        self.rotation = parent.rotation.copy()
+        self.body = parent.body.copy()
+        self.center = parent.center.copy()
         self.mutate()
 
     def shuffle(self, point):
@@ -59,16 +77,18 @@ class Creature():
         return (newx,newy)
 
     def mutate(self):
-        for i,point in enumerate(self.pointList):
+        for i,point in enumerate(self.body):
             tempPoint = self.shuffle(point)
-            self.pointList[i] = tempPoint
+            self.body[i] = tempPoint
             self.fitnessEval()
-            if len(self.pointList)>3 and rand.random()<.005:
-                del self.pointList[i]
+            if len(self.body)>3 and rand.random()<.005:
+                del self.body[i]
 
             if rand.random()<.005:
-                tempPoint = (abs(self.pointList[i-1][0]+point[0])/2,abs(self.pointList[i-1][1]+point[1])/2)
-                self.pointList.insert(i,tempPoint)
+                tempPoint = (abs(self.body[i-1][0]+point[0])/2,abs(self.body[i-1][1]+point[1])/2)
+                self.body.insert(i,tempPoint)
+
+        self.center = self.centroid();
 
     def fitnessEval(self):
         a = np.array([self.pointList[0][0],self.pointList[0][1]])
@@ -106,13 +126,13 @@ class Creature():
         return fitness
 
     def draw(self):
-        pygame.draw.polygon(self.screen, (0,0,255), self.pointList, 0)
+        pygame.draw.polygon(self.screen, (0,0,255), self.translate(self.body, self.rotation, self.position))
         #self.mutate()
 
 class food():
-    def __init__(self, screen, location):
-        self.location = location
+    def __init__(self, screen, position):
+        self.position = position
         self.screen = screen
 
     def draw(self):
-        pygame.draw.circle(self.screen, (0,200,0), (self.location[0], self.location[1]),10)
+        pygame.draw.circle(self.screen, (0,200,0), (self.position[0], self.position[1]),10)
