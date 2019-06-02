@@ -9,6 +9,7 @@ import math
 import random as rand
 import NeuralNetwork as nn
 
+
 class Creature():
     """
     A class used to represent a Creature (I'll come up with a better name eventually)
@@ -40,16 +41,16 @@ class Creature():
         If natural selection is effectively simulated
     """
 
-    def __init__(self, screen, position = 0, rotation = 0, parent1 = "", parent2 = ""):
+    def __init__(self, screen, position=(0, 0), rotation=0, parent1="", parent2=""):
         self.screen = screen
-        self.pointList = [(rand.random()*500,rand.random()*500),(rand.random()*500,rand.random()*500),(rand.random()*500,rand.random()*500)]
+        self.pointList = [(rand.random()*500, rand.random()*500), (rand.random()
+                                                                   * 500, rand.random()*500), (rand.random()*500, rand.random()*500)]
         self.position = position
         self.rotation = rotation
 
-        self.body = [(-10,0),(10,0),(0,20)]
+        self.body = [(-10, 0), (10, 0), (0, 20)]
 
         self.center = self.centroid()
-
 
     def centroid(self):
         x = [p[0] for p in self.body]
@@ -57,7 +58,7 @@ class Creature():
         return (sum(x) / len(self.body), sum(y) / len(self.body))
 
     def translate(self, points, angle, position):
-        return np.dot(np.array(points)-np.array(self.center),np.array([[np.cos(angle),np.sin(angle)],[-np.sin(angle),np.cos(angle)]]))+self.center+self.position
+        return np.dot(np.array(points)-np.array(self.center), np.array([[np.cos(angle), np.sin(angle)], [-np.sin(angle), np.cos(angle)]]))+self.center+self.position
 
     def copy(self, parent):
         self.pointList = parent.pointList.copy()
@@ -73,61 +74,74 @@ class Creature():
 
         newx = point[0]+math.log10(randx/(1-randx))*1
         newy = point[1]+math.log10(randy/(1-randy))*1
-        #print((newx,newy))
-        return (newx,newy)
+        # print((newx,newy))
+        return (newx, newy)
 
     def mutate(self):
-        for i,point in enumerate(self.body):
+        for i, point in enumerate(self.body):
             tempPoint = self.shuffle(point)
             self.body[i] = tempPoint
             self.fitnessEval()
-            if len(self.body)>3 and rand.random()<.005:
+            if len(self.body) > 3 and rand.random() < .005:
                 del self.body[i]
 
-            if rand.random()<.005:
-                tempPoint = (abs(self.body[i-1][0]+point[0])/2,abs(self.body[i-1][1]+point[1])/2)
-                self.body.insert(i,tempPoint)
+            if rand.random() < .005:
+                tempPoint = (
+                    abs(self.body[i-1][0]+point[0])/2, abs(self.body[i-1][1]+point[1])/2)
+                self.body.insert(i, tempPoint)
 
-        self.center = self.centroid();
+        self.center = self.centroid()
 
     def fitnessEval(self):
-        a = np.array([self.pointList[0][0],self.pointList[0][1]])
-        b = np.array([self.pointList[1][0],self.pointList[1][1]])
-        c = np.array([self.pointList[2][0],self.pointList[2][1]])
+        a = np.array([self.pointList[0][0], self.pointList[0][1]])
+        b = np.array([self.pointList[1][0], self.pointList[1][1]])
+        c = np.array([self.pointList[2][0], self.pointList[2][1]])
 
         v1 = b-a
         v2 = c-a
 
-        cosine_angle = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+        cosine_angle = np.dot(v1, v2) / \
+            (np.linalg.norm(v1) * np.linalg.norm(v2))
         angle1 = np.arccos(cosine_angle)
 
         v1 = a-b
         v2 = c-b
 
-        cosine_angle = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+        cosine_angle = np.dot(v1, v2) / \
+            (np.linalg.norm(v1) * np.linalg.norm(v2))
         angle2 = np.arccos(cosine_angle)
 
         v1 = b-c
         v2 = a-c
 
-        cosine_angle = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+        cosine_angle = np.dot(v1, v2) / \
+            (np.linalg.norm(v1) * np.linalg.norm(v2))
         angle3 = np.arccos(cosine_angle)
 
         angles = [angle1*57.2958, angle2*57.2958, angle3*57.2958]
-        #print("angles")
-        #print(angles)
+        # print("angles")
+        # print(angles)
 
-        fitness = abs(angles[0]-75)+abs(angles[1]-75)+abs(angles[2]-30)#(angles[0]-60)**2+(angles[1]-60)**2+(angles[2]-60)**2
+        # (angles[0]-60)**2+(angles[1]-60)**2+(angles[2]-60)**2
+        fitness = abs(angles[0]-75)+abs(angles[1]-75)+abs(angles[2]-30)
 
-        if len(self.pointList)!=3:
-            fitness+= abs(len(self.pointList)-3)*10
+        if len(self.pointList) != 3:
+            fitness += abs(len(self.pointList)-3)*10
 
-        #print(fitness)
+        # print(fitness)
         return fitness
 
     def draw(self):
-        pygame.draw.polygon(self.screen, (0,0,255), self.translate(self.body, self.rotation, self.position))
-        #self.mutate()
+        pygame.draw.polygon(self.screen, (0, 0, 255), self.translate(
+            self.body, self.rotation, self.position))
+        # self.mutate()
+
+    def manualMove(self, foreward, angle):
+        self.rotation += angle
+        newPosition = (self.position[0]+foreward*np.cos(self.rotation),
+                       self.position[1]+foreward*np.sin(self.rotation))
+        self.position = newPosition
+
 
 class food():
     def __init__(self, screen, position):
@@ -135,4 +149,5 @@ class food():
         self.screen = screen
 
     def draw(self):
-        pygame.draw.circle(self.screen, (0,200,0), (self.position[0], self.position[1]),10)
+        pygame.draw.circle(self.screen, (0, 200, 0),
+                           (self.position[0], self.position[1]), 10)
