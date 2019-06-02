@@ -7,7 +7,9 @@ Currently, a shape is generated randomly. Every generation, 10 children are crea
 
 planned features-
 
-	Each "Creature" currently has a brain, consisting of a simple neural network, whose weights can mutate the same way the shape does. I'd like to add movement functionality to the shape, and reward it for finding food. Eventually, the shapes should perform complicated actions and movements, if Darwin is to be believed.
+	Each "Creature" currently has a brain, consisting of a simple neural network, whose weights can mutate the same way
+	the shape does. I'd like to add movement functionality to the shape, and reward it for finding food. Eventually, the
+	shapes should perform complicated actions and movements, if Darwin is to be believed.
 	
 
 If you want to run this project, you need to have pip and python 3.7.0 
