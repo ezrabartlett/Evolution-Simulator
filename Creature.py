@@ -138,8 +138,8 @@ class Creature():
 
     def manualMove(self, foreward, angle):
         self.rotation += angle
-        newPosition = (self.position[0]+foreward*np.cos(self.rotation),
-                       self.position[1]+foreward*np.sin(self.rotation))
+        newPosition = (self.position[0]+foreward*np.sin(-self.rotation),
+                       self.position[1]+foreward*np.cos(-self.rotation))
         self.position = newPosition
 
 

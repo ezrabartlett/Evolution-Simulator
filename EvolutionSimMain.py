@@ -6,8 +6,12 @@
 
 import pygame
 from Creature import *
+import time
 
 pygame.init()
+pygame.font.init()
+
+myfont = pygame.font.SysFont('timesnewromanttf', 15)
 
 screen = pygame.display.set_mode((500, 500))
 
@@ -20,10 +24,17 @@ food = food(screen, (100, 100))
 runFlag = True
 generation = 0
 # Main game loop
+secondCounter = 0
+
+last_time = time.time()
+
 while runFlag:
+    dtime = time.time()-last_time
+    last_time = time.time()
+    start_time = time.time()
     generation += 1
     #print("Generation "+str(generation))
-    pygame.time.delay(1)
+    pygame.time.delay(10)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -32,12 +43,9 @@ while runFlag:
     screen.fill((255, 255, 255))
     food.draw()
     keys = pygame.key.get_pressed()
-    for i in range(1, len(keys)):
-        if(keys[i] == 1):
-            print(i)
 
-    foreward = (keys[273])*10
-    rotation = (keys[275]-keys[276])*.1
+    foreward = (keys[273])*200*dtime
+    rotation = (keys[275]-keys[276])*5*dtime
 
     firstCreature.manualMove(foreward, rotation)
     # Temporary, for testing fitness evolution
@@ -56,11 +64,14 @@ while runFlag:
     # print(" ")
     # print(children[mostFit].fitnessEval())
 
-    firstCreature.mutate()
+    # firstCreature.mutate()
 
     # firstCreature = children[mostFit]
     firstCreature.draw()
-
+    elapsed_time = time.time() - start_time
+    # print(pygame.font.get_fonts())
+    textsurface = myfont.render(str(1/elapsed_time), False, (10, 10, 10))
+    screen.blit(textsurface, (400, 0))
     pygame.display.update()
 
 
