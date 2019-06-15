@@ -14,8 +14,8 @@ clock = pygame.time.Clock()
 
 myfont = pygame.font.SysFont('timesnewromanttf', 15)
 
-#screen = pygame.display.set_mode((500, 500))
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((500, 500), pygame.FULLSCREEN)
+#screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("EvoSim")
 lsit = []
 
@@ -29,7 +29,7 @@ secondCounter = 0
 
 
 while runFlag:
-    dtime = clock.tick_busy_loop(4000)
+    dtime = clock.tick(4000)
     print(clock.get_fps())
     # dtime = time.time()-last_time
     generation += 1
@@ -38,7 +38,7 @@ while runFlag:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_TAB:
-                running = False
+                runFlag = False
     # print("Generation "+str(generation))
    # for event in pygame.event.get():
     #    if event.type == pygame.QUIT:
