@@ -9,7 +9,6 @@ import math
 import random as rand
 import NeuralNetwork as nn
 
-
 class Creature():
     """
     A class used to represent a Creature (I'll come up with a better name eventually)
@@ -43,14 +42,53 @@ class Creature():
 
     def __init__(self, screen, position=(0, 0), rotation=0, parent1="", parent2=""):
         self.screen = screen
-        self.pointList = [(rand.random()*500, rand.random()*500), (rand.random()
-                                                                   * 500, rand.random()*500), (rand.random()*500, rand.random()*500)]
+        self.pointList = [(rand.random()*500, rand.random()*500), (rand.random() * 500, rand.random()*500), (rand.random()*500, rand.random()*500)]
         self.position = position
         self.rotation = rotation
-
+        self.resolution = 20
+        self.range = 100
+        self.span = 3.14/2
+        self.vision = [None] * self.resolution
         self.body = [(-10, 0), (10, 0), (0, 20)]
 
         self.center = self.centroid()
+
+    # Will contain the logic to be executed every tick, or every few ticks
+    def tick():
+        pass
+
+    def checkCollision(self, position):
+        # Checks for colisions in a List of objects
+        return False
+
+    def march(self, position, angle, maxDistance):
+        dMarch = 10
+        dx = dMarch*np.cos(angle)
+        dy = dMarch*np.sin(angle)
+
+        for i in range(0, int(maxDistance/dMarch)):
+            collision = self.checkCollision(position)
+            if collision != 0:
+                pygame.draw.circle(self.screen, (200, 0, 0), (int(position[0]), int(position[1])), 4)
+                return collision
+            position = (position[0]+dx, position[1]+dy)
+
+        pygame.draw.circle(self.screen, (200, 0, 0), (int(position[0]), int(position[1])), 4)
+        return collision
+        # returns the color of what it hits, or 0 if nothing is hit.
+
+    # Uses ray tracing to populate the vision array. This will be used as input to the neural net
+    def look(self):
+        # resolution
+        # range
+        # span
+        center = self.position+self.center
+        dangle = self.span/self.resolution
+        startingAngle = self.rotation-self.span/2
+
+        for i in range(0, self.resolution):
+            self.vision[i] = self.march(self.position, startingAngle+3.14/2+dangle*i, self.range)
+
 
     def centroid(self):
         x = [p[0] for p in self.body]
@@ -58,7 +96,7 @@ class Creature():
         return (sum(x) / len(self.body), sum(y) / len(self.body))
 
     def translate(self, points, angle, position):
-        return np.dot(np.array(points)-np.array(self.center), np.array([[np.cos(angle), np.sin(angle)], [-np.sin(angle), np.cos(angle)]]))+self.center+self.position
+        return np.dot(np.array(points)-np.array(self.center), np.array([[np.cos(angle), np.sin(angle)], [-np.sin(angle), np.cos(angle)]]))+self.position
 
     def copy(self, parent):
         self.pointList = parent.pointList.copy()
@@ -81,7 +119,7 @@ class Creature():
         for i, point in enumerate(self.body):
             tempPoint = self.shuffle(point)
             self.body[i] = tempPoint
-            self.fitnessEval()
+            #self.fitnessEval()
             if len(self.body) > 3 and rand.random() < .005:
                 del self.body[i]
 
@@ -149,5 +187,4 @@ class food():
         self.screen = screen
 
     def draw(self):
-        pygame.draw.circle(self.screen, (0, 200, 0),
-                           (self.position[0], self.position[1]), 10)
+        pygame.draw.circle(self.screen, (0, 200, 0), (self.position[0], self.position[1]), 10)

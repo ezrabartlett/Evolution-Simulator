@@ -14,7 +14,7 @@ clock = pygame.time.Clock()
 
 myfont = pygame.font.SysFont('timesnewromanttf', 15)
 
-screen = pygame.display.set_mode((500, 500), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((500, 500))#, pygame.FULLSCREEN)
 #screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("EvoSim")
 lsit = []
@@ -29,7 +29,7 @@ secondCounter = 0
 
 
 while runFlag:
-    dtime = clock.tick(4000)
+    dtime = clock.tick(60)
     print(clock.get_fps())
     # dtime = time.time()-last_time
     generation += 1
@@ -47,12 +47,15 @@ while runFlag:
 
     screen.fill((255, 255, 255))
     food.draw()
-    # keys = pygame.key.get_pressed()
+    keys = pygame.key.get_pressed()
 
-    # foreward = (keys[273])*5*dtime
-    # rotation = (keys[275]-keys[276])*.05*dtime
+    foreward = (keys[273])*.2*dtime
+    rotation = (keys[275]-keys[276])*.005*dtime
 
-    # firstCreature.manualMove(foreward, rotation)
+    firstCreature.manualMove(foreward, rotation)
+
+    firstCreature.look()
+
     # Temporary, for testing fitness evolution
     children = []
     mostFit = 99.9
@@ -69,7 +72,7 @@ while runFlag:
     # print(" ")
     # print(children[mostFit].fitnessEval())
 
-    # firstCreature.mutate()
+    #firstCreature.mutate()
     # firstCreature = children[mostFit]
     firstCreature.draw()
     # print(pygame.font.get_fonts())
