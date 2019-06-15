@@ -10,11 +10,12 @@ import time
 
 pygame.init()
 pygame.font.init()
+clock = pygame.time.Clock()
 
 myfont = pygame.font.SysFont('timesnewromanttf', 15)
 
-screen = pygame.display.set_mode((500, 500))
-
+#screen = pygame.display.set_mode((500, 500))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("EvoSim")
 lsit = []
 
@@ -26,28 +27,32 @@ generation = 0
 # Main game loop
 secondCounter = 0
 
-last_time = time.time()
 
 while runFlag:
-    dtime = time.time()-last_time
-    last_time = time.time()
-    start_time = time.time()
+    dtime = clock.tick_busy_loop(4000)
+    print(clock.get_fps())
+    # dtime = time.time()-last_time
     generation += 1
-    #print("Generation "+str(generation))
-    pygame.time.delay(10)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_TAB:
+                running = False
+    # print("Generation "+str(generation))
+   # for event in pygame.event.get():
+    #    if event.type == pygame.QUIT:
+    #       pygame.quit()
+    #      sys.exit()
 
     screen.fill((255, 255, 255))
     food.draw()
-    keys = pygame.key.get_pressed()
+    # keys = pygame.key.get_pressed()
 
-    foreward = (keys[273])*200*dtime
-    rotation = (keys[275]-keys[276])*5*dtime
+    # foreward = (keys[273])*5*dtime
+    # rotation = (keys[275]-keys[276])*.05*dtime
 
-    firstCreature.manualMove(foreward, rotation)
+    # firstCreature.manualMove(foreward, rotation)
     # Temporary, for testing fitness evolution
     children = []
     mostFit = 99.9
@@ -65,13 +70,12 @@ while runFlag:
     # print(children[mostFit].fitnessEval())
 
     # firstCreature.mutate()
-
     # firstCreature = children[mostFit]
     firstCreature.draw()
-    elapsed_time = time.time() - start_time
     # print(pygame.font.get_fonts())
-    textsurface = myfont.render(str(1/elapsed_time), False, (10, 10, 10))
-    screen.blit(textsurface, (400, 0))
+    textsurface = myfont.render(
+        str(pygame.time.Clock().get_fps()), False, (10, 10, 10))
+    # screen.blit(textsurface, (400, 0))
     pygame.display.update()
 
 
