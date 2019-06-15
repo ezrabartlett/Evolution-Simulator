@@ -46,6 +46,7 @@ class Creature():
         self.position = position
         self.rotation = rotation
         self.resolution = 20
+        self.energy = 100
         self.range = 100
         self.span = 3.14/2
         self.vision = [None] * self.resolution
@@ -57,28 +58,30 @@ class Creature():
     def tick():
         pass
 
-    def checkCollision(self, position):
-        # Checks for colisions in a List of objects
+    def checkCollision(self, position, collisionList):
+        for object in collisionList:
+            if (np.linalg.norm((np.array(position) - np.array(object.position))) < 10):
+                return True
         return False
 
-    def march(self, position, angle, maxDistance):
+    def march(self, position, angle, maxDistance, collisionList):
         dMarch = 10
         dx = dMarch*np.cos(angle)
         dy = dMarch*np.sin(angle)
 
         for i in range(0, int(maxDistance/dMarch)):
-            collision = self.checkCollision(position)
+            collision = self.checkCollision(position, collisionList)
             if collision != 0:
-                pygame.draw.circle(self.screen, (200, 0, 0), (int(position[0]), int(position[1])), 4)
+                pygame.draw.circle(self.screen, (0, 0, 200), (int(position[0]), int(position[1])), 2)
                 return collision
             position = (position[0]+dx, position[1]+dy)
 
-        pygame.draw.circle(self.screen, (200, 0, 0), (int(position[0]), int(position[1])), 4)
+        pygame.draw.circle(self.screen, (200, 0, 0), (int(position[0]), int(position[1])), 2)
         return collision
         # returns the color of what it hits, or 0 if nothing is hit.
 
     # Uses ray tracing to populate the vision array. This will be used as input to the neural net
-    def look(self):
+    def look(self, collisionList):
         # resolution
         # range
         # span
@@ -87,7 +90,7 @@ class Creature():
         startingAngle = self.rotation-self.span/2
 
         for i in range(0, self.resolution):
-            self.vision[i] = self.march(self.position, startingAngle+3.14/2+dangle*i, self.range)
+            self.vision[i] = self.march(self.position, startingAngle+3.14/2+dangle*i, self.range, collisionList)
 
 
     def centroid(self):

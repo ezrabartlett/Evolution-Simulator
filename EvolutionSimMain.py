@@ -20,7 +20,7 @@ pygame.display.set_caption("EvoSim")
 lsit = []
 
 firstCreature = Creature(screen, (50, 50))
-food = food(screen, (100, 100))
+food = [food(screen, (100, 100))]
 
 runFlag = True
 generation = 0
@@ -46,7 +46,8 @@ while runFlag:
     #      sys.exit()
 
     screen.fill((255, 255, 255))
-    food.draw()
+    for meal in food:
+        meal.draw()
     keys = pygame.key.get_pressed()
 
     foreward = (keys[273])*.2*dtime
@@ -54,7 +55,7 @@ while runFlag:
 
     firstCreature.manualMove(foreward, rotation)
 
-    firstCreature.look()
+    firstCreature.look(food)
 
     # Temporary, for testing fitness evolution
     children = []
