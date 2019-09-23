@@ -7,11 +7,12 @@
 import pygame
 from Creature import *
 import time
+from rayMarcher import *
 
 pygame.init()
 pygame.font.init()
 clock = pygame.time.Clock()
-
+background = [1,22,39]
 myfont = pygame.font.SysFont('timesnewromanttf', 15)
 
 screen = pygame.display.set_mode((500, 500))#, pygame.FULLSCREEN)
@@ -27,6 +28,16 @@ generation = 0
 # Main game loop
 secondCounter = 0
 
+testPolygon = [(200,140),(250, 195), (280, 144)]
+
+testBodies = [[(200,140),(250, 195), (280, 144)],[(290,240),(340, 295), (370, 244)]]
+testFoods = [(100,100)]
+
+rayStart = (250, 250)
+rayDirection = 3
+
+def drawPoly(polygon):
+    pygame.draw.polygon(screen, (0, 0, 255), polygon)
 
 while runFlag:
     dtime = clock.tick(60)
@@ -45,17 +56,15 @@ while runFlag:
     #       pygame.quit()
     #      sys.exit()
 
-    screen.fill((255, 255, 255))
+    screen.fill(background)
+    for poly in testBodies:
+        drawPoly(poly)
     for meal in food:
         meal.draw()
     keys = pygame.key.get_pressed()
 
     foreward = (keys[273])*.2*dtime
     rotation = (keys[275]-keys[276])*.005*dtime
-
-    firstCreature.manualMove(foreward, rotation)
-
-    firstCreature.look(food)
 
     # Temporary, for testing fitness evolution
     children = []
@@ -72,15 +81,21 @@ while runFlag:
     # print(mostFit)
     # print(" ")
     # print(children[mostFit].fitnessEval())
+    firstCreature.tick(food, dtime)
 
+    #distanceToCircle(firstCreature.position, food[0].position, 10, screen)
     #firstCreature.mutate()
     # firstCreature = children[mostFit]
-    firstCreature.draw()
     # print(pygame.font.get_fonts())
+    castRay(rayStart, rayDirection, 100, testFoods, testBodies, screen)
+    rayDirection = rayDirection+.01;
+
     textsurface = myfont.render(
         str(pygame.time.Clock().get_fps()), False, (10, 10, 10))
     # screen.blit(textsurface, (400, 0))
+
     pygame.display.update()
+
 
 
 def main():

@@ -29,6 +29,26 @@ class NeuralNetwork:
     def sigmoid(self,x):
         return 1/(1+numpy.exp(-x))
 
+    # Shuffle a neuron
+    def shuffle(self, neuron):
+        random = rand.random()
+
+        newNeuron = point[0]+math.log10(randx/(1-randx))*1
+        # print((newx,newy))
+        return newNeuron
+
+    def copy(parentNN):
+        self.layers = parentNN.layers.copy()
+        self.weights = parentNN.weights.copy()
+        self.biases = parentNN.biases.copy()
+
+    # Shuffle all neurons
+    def mutate():
+        for layer in self.weights:
+            for neuron in layer:
+                neuron = self.shuffle(neuron)
+
+
     # Runs an input through the network and returns the output
     def forwardProp(self,inputs):
         # Swap first layer with the input
